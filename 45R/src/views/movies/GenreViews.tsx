@@ -1,6 +1,7 @@
-import { ImageGrid, Pagination } from '@/components';
-import { type GenreResponse, type ImageCell, DISCOVER_ENDPOINT, getImageUrl } from '@/core';
+import { ImageGrid, ImageOverlay, Pagination } from '@/components';
+import { DISCOVER_ENDPOINT, cartAction, favoriteAction, getImageUrl, type GenreResponse, type ImageCell } from '@/core';
 import { useTmdb } from '@/hooks';
+import { useUserContext } from '@/hooks/useUserContext';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -36,6 +37,7 @@ export const GenreView = () => {
   const genreId = genres.find((g) => g.value === genreValue)?.id ?? genres[0].id;
   const [page, setPage] = useState<number>(1);
   const { data } = useTmdb<GenreResponse>(`${DISCOVER_ENDPOINT}/${mediaType}`, { with_genres: genreId, page });
+  const { cart, favorites, toggleCart, toggleFavorite } = useUserContext();
 
   const handleMediaTypeChange = (type: string) => {
     const firstGenre = (type === 'movie' ? movieGenres : tvGenres)[0].value;
@@ -89,6 +91,15 @@ export const GenreView = () => {
           <ImageGrid
             images={gridData}
             onClick={(image) => navigate(mediaType === 'movie' ? `/movie/${image.id}/credits` : `/tv/${image.id}/seasons`)}
+            renderOverlay={(image) => (
+              <ImageOverlay
+                actions={[
+                  favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite),
+                  cartAction((image: ImageCell) => cart.has(image.id), toggleCart),
+                ]}
+                image={image}
+              />
+            )}
           />
           <Pagination page={page} maxPages={data.total_pages} onClick={setPage} />
         </>

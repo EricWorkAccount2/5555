@@ -1,56 +1,38 @@
 import { Button } from '@/components';
 import { useUserContext } from '@/hooks/useUserContext';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export const SettingsView = () => {
   const { userName, setUserName } = useUserContext();
   const [value, setValue] = useState(userName);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    setValue(userName);
-  }, [userName]);
-
   return (
     <section className="mx-auto max-w-7xl space-y-5 p-5">
       <h1 className="text-3xl font-bold">Settings</h1>
-
       <div className="max-w-md space-y-4 rounded-2xl border border-gray-700 bg-gray-900 p-6">
         <div>
           <h2 className="text-lg font-semibold">Profile</h2>
           <p className="text-sm text-gray-400">Update your profile</p>
         </div>
-
         <div className="space-y-2">
           <label className="text-sm text-gray-300">Username</label>
-
           <input
-            type="text"
-            value={value}
-            onChange={(e) => {
-              setValue(e.target.value);
+            className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            onChange={(event) => {
+              setValue(event.target.value);
               setError('');
             }}
             placeholder="Enter your name"
-            className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            type="text"
+            value={value}
           />
-
-          {error && (
-            <p className="text-sm text-red-400">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-400">{error}</p>}
         </div>
-
         <div className="flex justify-end gap-2">
-          <Button
-            onClick={() => {
-              setValue(userName);
-              setError('');
-            }}
-            variant="grey"
-          >
+          <Button onClick={() => setValue(userName)} variant="grey">
             Reset
           </Button>
-
           <Button
             onClick={() => {
               const trimmed = value.trim();
@@ -58,14 +40,10 @@ export const SettingsView = () => {
               if (!trimmed) {
                 setError('Username cannot be empty');
                 return;
+              } else {
+                setUserName(trimmed);
+                setError('');
               }
-
-              if (trimmed === userName) {
-                return;
-              }
-
-              setUserName(trimmed);
-              setError('');
             }}
           >
             Save

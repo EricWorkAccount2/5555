@@ -30,9 +30,37 @@ export type GenreResponse = {
   results: Array<{
     id: number;
     original_title?: string;
+    original_name?: string;
     name?: string;
     poster_path: string;
   }>;
+  total_pages: number;
+};
+
+export type TVResponse = {
+  id: number;
+  name: string;
+  original_name?: string;
+  overview: string;
+  poster_path: string;
+  backdrop_path: string;
+  first_air_date?: string;
+  vote_average: string;
+  results: Array<{
+    id: number;
+    name: string;
+    original_name?: string;
+    original_title?: string;
+    poster_path: string;
+  }>;
+  videos?: {
+    results: Array<{
+      key: string;
+      name: string;
+      site: string;
+      type: string;
+    }>;
+  };
   total_pages: number;
 };
 

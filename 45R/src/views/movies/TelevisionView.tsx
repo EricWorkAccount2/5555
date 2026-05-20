@@ -1,6 +1,7 @@
-import { ImageGrid, Pagination } from '@/components';
-import { getImageUrl, TV_ENDPOINT, type ImageCell, type MovieResponse } from '@/core';
+import { ImageGrid, ImageOverlay, Pagination } from '@/components';
+import { cartAction, favoriteAction, getImageUrl, TV_ENDPOINT, type ImageCell, type TVResponse } from '@/core';
 import { useTmdb } from '@/hooks';
+import { useUserContext } from '@/hooks/useUserContext';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -10,12 +11,12 @@ export const TelevisionView = () => {
   const tvCategory = category || 'airing_today';
   const [page, setPage] = useState<number>(1);
 
-  const { data } = useTmdb<MovieResponse>(`${TV_ENDPOINT}/${tvCategory}`, { page, tvCategory });
-
+  const { data } = useTmdb<TVResponse>(`${TV_ENDPOINT}/${tvCategory}`, { page, tvCategory });
+  const { cart, favorites, toggleCart, toggleFavorite } = useUserContext();
   const gridData: ImageCell[] = (data?.results ?? []).map((result) => ({
     id: result.id,
     imageUrl: getImageUrl(result.poster_path),
-    primaryText: result.original_title,
+    primaryText: result.original_title ?? result.name ?? result.original_name ?? 'Unknown',
   }));
 
   const categories = [
@@ -29,7 +30,7 @@ export const TelevisionView = () => {
 
   return (
     <section className="mx-auto max-w-7xl space-y-5 p-5">
-      <h1 className="mb-4 text-3xl font-bold">Trending</h1>
+      <h1 className="mb-4 text-3xl font-bold">Television</h1>
       <div className="mb-4 flex flex-wrap items-center justify-end gap-4">
         <div className="flex gap-2">
           {categories.map((c) => (
@@ -43,7 +44,19 @@ export const TelevisionView = () => {
           ))}
         </div>
       </div>
-      <ImageGrid images={gridData} onClick={(image) => navigate(`/tv/${image.id}/seasons`)} />
+      <ImageGrid
+        images={gridData}
+        onClick={(image) => navigate(`/tv/${image.id}/seasons`)}
+        renderOverlay={(image) => (
+          <ImageOverlay
+            actions={[
+              favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite),
+              cartAction((image: ImageCell) => cart.has(image.id), toggleCart),
+            ]}
+            image={image}
+          />
+        )}
+      />
       <Pagination page={page} maxPages={data.total_pages} onClick={setPage} />
     </section>
   );

@@ -1,6 +1,6 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-export type Media = "movie" | "tv";
+export type Media = 'movie' | 'tv';
 
 export type ImageCell = {
   id: number;
@@ -15,5 +15,13 @@ export type ImageAction = {
   icon: (active: boolean) => ReactNode;
   active: (image: ImageCell) => boolean;
   onClick: (image: ImageCell) => void;
-  position: "left" | "right";
+  position: 'left' | 'right';
 };
+
+export type CartAction = {
+  id: string;
+  icon: (active: boolean) => ReactNode;
+  active: (image: ImageCell) => boolean;
+  onClick: (image: ImageCell) => void;
+  position: 'left' | 'right';
+}

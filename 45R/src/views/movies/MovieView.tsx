@@ -1,6 +1,7 @@
-import { ImageGrid, Pagination } from '@/components';
-import { getImageUrl, MOVIE_ENDPOINT, type ImageCell, type MovieResponse } from '@/core';
+import { ImageGrid, ImageOverlay, Pagination } from '@/components';
+import { cartAction, favoriteAction, getImageUrl, MOVIE_ENDPOINT, type ImageCell, type MovieResponse } from '@/core';
 import { useTmdb } from '@/hooks';
+import { useUserContext } from '@/hooks/useUserContext';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -11,6 +12,7 @@ export const MoviesView = () => {
   const [page, setPage] = useState<number>(1);
 
   const { data } = useTmdb<MovieResponse>(`${MOVIE_ENDPOINT}/${movieCategory}`, { page, movieCategory });
+  const { cart, favorites, toggleCart, toggleFavorite } = useUserContext();
 
   const gridData: ImageCell[] = (data?.results ?? []).map((result) => ({
     id: result.id,
@@ -43,7 +45,19 @@ export const MoviesView = () => {
           ))}
         </div>
       </div>
-      <ImageGrid images={gridData} onClick={(image) => navigate(`/movie/${image.id}/credits`)} />
+      <ImageGrid
+        images={gridData}
+        onClick={(image) => navigate(`/movie/${image.id}/credits`)}
+        renderOverlay={(image) => (
+          <ImageOverlay
+            actions={[
+              favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite),
+              cartAction((image: ImageCell) => cart.has(image.id), toggleCart),
+            ]}
+            image={image}
+          />
+        )}
+      />
       <Pagination page={page} maxPages={data.total_pages} onClick={setPage} />
     </section>
   );

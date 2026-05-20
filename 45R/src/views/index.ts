@@ -15,3 +15,6 @@ export * from '@/views/movies/TrailersView';
 export * from '@/views/movies/TrendingView';
 export * from '@/views/site/ErrorView';
 export * from '@/views/site/HomeView';
+export * from '@/views/user/CartView';
+export * from '@/views/user/FavoritesView';
+export * from '@/views/user/SettingsView';

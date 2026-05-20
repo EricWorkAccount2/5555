@@ -1,4 +1,4 @@
-import { type ImageCell, type ImageAction } from '@/core';
+import { type ImageCell } from '@/core';
 
 type ImageGridProps = {
   images: ImageCell[];
@@ -12,27 +12,18 @@ export const ImageGrid = ({ images, onClick, renderOverlay }: ImageGridProps) =>
       {images.map((image) => (
         <div
           key={image.id}
-          className={`relative overflow-hidden rounded-lg bg-gray-800 ${
-            onClick ? 'cursor-pointer transition hover:scale-[1.02]' : ''
-          }`}
+          className={`rounded-lg bg-gray-800 ${onClick ? 'cursor-pointer transition hover:scale-[1.02]' : ''}`}
           onClick={() => onClick?.(image)}
         >
-          <img src={image.imageUrl} alt={image.primaryText} />
-
-          {renderOverlay?.(image)}
+          <div className="relative aspect-[2/3] overflow-hidden">
+            <img className="h-full w-full object-cover" src={image.imageUrl} alt={image.primaryText} />
+            {renderOverlay?.(image)}
+          </div>
 
           {(image.primaryText || image.secondaryText) && (
             <div className="flex flex-col p-3 text-center">
-              {image.primaryText && (
-                <p className="truncate text-sm font-semibold">
-                  {image.primaryText}
-                </p>
-              )}
-              {image.secondaryText && (
-                <p className="truncate text-sm font-semibold text-blue-400">
-                  {image.secondaryText}
-                </p>
-              )}
+              {image.primaryText && <p className="truncate text-sm font-semibold">{image.primaryText}</p>}
+              {image.secondaryText && <p className="truncate text-sm font-semibold text-blue-400">{image.secondaryText}</p>}
             </div>
           )}
         </div>
