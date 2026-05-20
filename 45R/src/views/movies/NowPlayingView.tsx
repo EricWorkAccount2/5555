@@ -21,7 +21,7 @@ export const NowPlayingView = () => {
     { key: 'top_rated', label: 'Top Rated' },
     { key: 'upcoming', label: 'Upcoming' },
   ];
-  
+
   if (!data) {
     return <p className="text-center text-gray-400">Loading...</p>;
   }
