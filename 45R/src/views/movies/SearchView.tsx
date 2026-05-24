@@ -1,8 +1,10 @@
-import { ButtonGroup, ImageGrid, Pagination, SearchBar } from '@/components';
-import { type ImageCell, type SearchResponse, getImageUrl, RATE_LIMIT_DELAY, SEARCH_ENDPOINT } from '@/core';
+import { ButtonGroup, ImageGrid, ImageOverlay, Pagination, SearchBar } from '@/components';
+import { type ImageCell, type SearchResponse, favoriteAction, getImageUrl, RATE_LIMIT_DELAY, SEARCH_ENDPOINT } from '@/core';
 import { useDebounce, useTmdb } from '@/hooks';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useUserContext } from '@/hooks/useUserContext';
+
 
 export const SearchView = () => {
   const navigate = useNavigate();
@@ -12,6 +14,8 @@ export const SearchView = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const type = searchParams.get('type') ?? 'movie';
   const { data } = useTmdb<SearchResponse>(`${SEARCH_ENDPOINT}/${type}`, { query: debouncedQuery, page });
+    const { favorites, toggleFavorite } = useUserContext();
+  
 
   const updateParam = (key: string, value: string) => {
     setSearchParams({ type, [key]: value });
@@ -51,7 +55,11 @@ export const SearchView = () => {
             navigate(`/person/${image.id}/career`);
           }
         }}
+        renderOverlay={(image) => (
+          <ImageOverlay actions={[favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite)]} image={image} />
+        )}
       />
+
       {data.results.length ? (
         <Pagination page={page} maxPages={data.total_pages} onClick={setPage} />
       ) : (

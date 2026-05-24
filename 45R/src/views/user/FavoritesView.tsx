@@ -1,7 +1,8 @@
-import { ImageGrid, ImageOverlay } from '@/components';
+import { ImageGrid, ImageOverlay, Pagination } from '@/components';
 import { favoriteAction, type ImageCell } from '@/core';
 import { useUserContext } from '@/hooks/useUserContext';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 export const FavoritesView = () => {
   const navigate = useNavigate();
@@ -11,9 +12,21 @@ export const FavoritesView = () => {
   const mediaType = category === 'tv' ? 'tv' : 'movie';
   const favoritesList = Array.from(favorites.values());
   const hasMediaTag = favoritesList.some((image) => typeof image.media !== 'undefined');
-  const filteredFavorites = hasMediaTag
-    ? favoritesList.filter((image) => image.media === mediaType)
-    : favoritesList;
+  const filteredFavorites = hasMediaTag ? favoritesList.filter((image) => image.media === mediaType) : favoritesList;
+  const [page, setPage] = useState<number>(1);
+  const PAGE_SIZE = 12;
+  const totalPages = Math.max(Math.ceil(filteredFavorites.length / PAGE_SIZE), 1);
+  const visibleFavorites = filteredFavorites.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [category, filteredFavorites.length]);
 
   return (
     <section className="mx-auto max-w-7xl space-y-5 p-5">
@@ -43,13 +56,16 @@ export const FavoritesView = () => {
             : `You have no favorited ${mediaType === 'movie' ? 'movies' : 'TV shows'} yet.`}
         </p>
       ) : (
-        <ImageGrid
-          images={filteredFavorites}
-          onClick={(image) => navigate(image.media === 'tv' ? `/tv/${image.id}/seasons` : `/movie/${image.id}/credits`)}
-          renderOverlay={(image) => (
-            <ImageOverlay actions={[favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite)]} image={image} />
-          )}
-        />
+        <>
+          <ImageGrid
+            images={visibleFavorites}
+            onClick={(image) => navigate(image.media === 'tv' ? `/tv/${image.id}/seasons` : `/movie/${image.id}/credits`)}
+            renderOverlay={(image) => (
+              <ImageOverlay actions={[favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite)]} image={image} />
+            )}
+          />
+          <Pagination page={page} maxPages={totalPages} onClick={setPage} />
+        </>
       )}
     </section>
   );

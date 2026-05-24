@@ -50,12 +50,7 @@ export const MoviesView = () => {
         images={gridData}
         onClick={(image) => navigate(`/movie/${image.id}/credits`)}
         renderOverlay={(image) => (
-          <ImageOverlay
-            actions={[
-              favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite),
-            ]}
-            image={image}
-          />
+          <ImageOverlay actions={[favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite)]} image={image} />
         )}
       />
       <Pagination page={page} maxPages={data.total_pages} onClick={setPage} />
