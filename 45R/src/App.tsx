@@ -22,6 +22,7 @@ import {
   TrendingView,
 } from '@/views';
 import { Route, Routes } from 'react-router-dom';
+import { TVView } from './views/TV/TVView';
 
 export const App = () => {
   return (
@@ -35,7 +36,7 @@ export const App = () => {
         <Route path="trending/:category" element={<TrendingView />} />
         <Route path="search" element={<SearchView />} />
         <Route path="movies/category/:category" element={<MoviesView />} />
-        <Route path="tv/category/:category" element={<TelevisionView />} />
+        <Route path="tv/category/:category" element={<TVView />} />
         {/* ------------------------------------------------------------------------------- */}
         <Route path="movie/:id" element={<MovieView />}>
           <Route path="credits" element={<CreditsView />} />
@@ -43,12 +44,12 @@ export const App = () => {
           <Route path="reviews" element={<ReviewsView />} />
         </Route>
         {/* ------------------------------------------------------------------------------- */}
-        <Route path="/tv/:id" element={<MovieView />}>
+        <Route path="tv/:id" element={<TelevisionView />}>
+          <Route path="seasons" element={<SeasonsView />} />
           <Route path="season/:season" element={<EpisodeView />} />
           <Route path="reviews" element={<ReviewsView />} />
           <Route path="credits" element={<CreditsView />} />
           <Route path="trailers" element={<TrailersView />} />
-          <Route path="seasons" element={<SeasonsView />} />
         </Route>
         {/* ------------------------------------------------------------------------------- */}
         <Route path="/person/:id" element={<PersonView />}>

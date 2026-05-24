@@ -24,4 +24,4 @@ export type CartAction = {
   active: (image: ImageCell) => boolean;
   onClick: (image: ImageCell) => void;
   position: 'left' | 'right';
-}
+};

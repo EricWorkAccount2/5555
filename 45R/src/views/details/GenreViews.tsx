@@ -1,5 +1,5 @@
 import { ImageGrid, ImageOverlay, Pagination } from '@/components';
-import { DISCOVER_ENDPOINT, cartAction, favoriteAction, getImageUrl, type GenreResponse, type ImageCell } from '@/core';
+import { DISCOVER_ENDPOINT, cartAction, favoriteAction, getImageUrl, type GenreResponse, type ImageCell, type Media } from '@/core';
 import { useTmdb } from '@/hooks';
 import { useUserContext } from '@/hooks/useUserContext';
 import { useState } from 'react';
@@ -54,6 +54,7 @@ export const GenreView = () => {
     id: result.id,
     imageUrl: getImageUrl(result.poster_path),
     primaryText: result.original_title ?? result.name ?? 'Unknown',
+    media: mediaType as Media,
   }));
 
   return (
@@ -63,13 +64,13 @@ export const GenreView = () => {
         <div className="flex gap-2">
           <button
             onClick={() => handleMediaTypeChange('movie')}
-            className={`rounded px-4 py-2 ${mediaType === 'movie' ? 'bg-blue-500' : 'bg-gray-700'} text-white`}
+            className={`rounded px-4 py-2 text-white transition ${mediaType === 'movie' ? 'bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'} `}
           >
             Movies
           </button>
           <button
             onClick={() => handleMediaTypeChange('tv')}
-            className={`rounded px-4 py-2 ${mediaType === 'tv' ? 'bg-blue-500' : 'bg-gray-700'} text-white`}
+            className={`rounded px-4 py-2 text-white transition ${mediaType === 'tv' ? 'bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'} `}
           >
             TV Shows
           </button>
@@ -79,7 +80,7 @@ export const GenreView = () => {
             <button
               key={genre.id}
               onClick={() => handleGenreChange(genre.value)}
-              className={`rounded px-4 py-2 text-white ${genreValue === genre.value ? 'bg-blue-500' : 'bg-gray-700'}`}
+              className={`rounded px-4 py-2 text-white transition ${genreValue === genre.value ? 'bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'} `}
             >
               {genre.name}
             </button>

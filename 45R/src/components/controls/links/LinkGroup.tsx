@@ -5,6 +5,7 @@ type LinkGroupProps = {
     label: string;
     to: string;
     match?: string[];
+    icon?: React.ReactNode; // Added icon prop
   }>;
 };
 

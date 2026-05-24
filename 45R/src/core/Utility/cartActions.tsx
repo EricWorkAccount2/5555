@@ -1,5 +1,5 @@
-import { FaShoppingCart } from 'react-icons/fa';
 import { ICON_SIZE, type ImageAction, type ImageCell } from '@/core';
+import { FaShoppingCart } from 'react-icons/fa';
 
 export const cartAction = (isInCart: (image: ImageCell) => boolean, onToggleCart: (image: ImageCell) => void): ImageAction => ({
   active: isInCart,

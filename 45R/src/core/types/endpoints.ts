@@ -7,7 +7,6 @@ export type MovieResponse = {
   backdrop_path: string;
   release_date: string;
   vote_average: string;
-  first_air_date?: string;
   results: Array<{
     name: string;
     id: number;
@@ -44,7 +43,7 @@ export type TVResponse = {
   overview: string;
   poster_path: string;
   backdrop_path: string;
-  first_air_date?: string;
+  first_air_date: string;
   vote_average: string;
   results: Array<{
     id: number;
@@ -91,7 +90,7 @@ export type CreditsResponse = {
   cast: Array<{
     id: number;
     name: string;
-    profile_path: string | null;
+    profile_path: string;
     character: string;
   }>;
 };

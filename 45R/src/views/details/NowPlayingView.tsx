@@ -34,7 +34,7 @@ export const NowPlayingView = () => {
           {gridOptions.map((c) => (
             <button
               key={c.key}
-              onClick={() => navigate(`/movies/category/${c.key}`)}
+              onClick={() => navigate(`/movie/category/${c.key}`)}
               className={`rounded px-4 py-2 ${c.key === 'now_playing' ? 'bg-blue-500' : 'bg-gray-700'} text-white`}
             >
               {c.label}

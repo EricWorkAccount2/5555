@@ -1,55 +1,64 @@
-import { DetailItem, LinkGroup, Modal } from '@/components';
-import { type MovieResponse, getBackdropUrl, getImageUrl, MOVIE_ENDPOINT, TV_ENDPOINT } from '@/core';
+import { ImageGrid, ImageOverlay, Pagination } from '@/components';
+import { favoriteAction, getImageUrl, MOVIE_ENDPOINT, type ImageCell, type MovieResponse } from '@/core';
 import { useTmdb } from '@/hooks';
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useUserContext } from '@/hooks/useUserContext';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export const MovieView = () => {
+export const MoviesView = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { pathname } = useLocation();
-  const TvRoute = pathname.startsWith('/tv');
-  const endpoint = TvRoute ? TV_ENDPOINT : MOVIE_ENDPOINT;
-  const { data } = useTmdb<MovieResponse>(`${endpoint}/${id}`, { append_to_response: 'videos' });
+  const { category } = useParams();
+  const movieCategory = category || 'now_playing';
+  const [page, setPage] = useState<number>(1);
 
-  if (!data) {
-    return <p className="text-center text-gray-400">Loading...</p>;
-  }
+  const { data } = useTmdb<MovieResponse>(`${MOVIE_ENDPOINT}/${movieCategory}`, { page, movieCategory });
+  const { favorites, toggleFavorite } = useUserContext();
 
-  const Tv = !!data.first_air_date;
+  const gridData: ImageCell[] = (data?.results ?? []).map((result) => ({
+    id: result.id,
+    imageUrl: getImageUrl(result.poster_path),
+    primaryText: result.original_title,
+    media: 'movie',
+  }));
+
+  const categories = [
+    { key: 'now_playing', label: 'Now Playing' },
+    { key: 'popular', label: 'Popular' },
+    { key: 'top_rated', label: 'Top Rated' },
+    { key: 'upcoming', label: 'Upcoming' },
+  ];
+
+  if (!data) return <p className="text-center text-gray-400">Loading...</p>;
 
   return (
-    <Modal onClick={() => navigate(-1)}>
-      <div className="grid h-full grid-rows-[auto_1fr]">
-        <img className="h-50 w-full rounded-2xl object-cover" src={getBackdropUrl(data.backdrop_path)} alt={data.title} />
-        <div className="grid min-h-0 grid-cols-[auto_1fr] gap-5 p-5">
-          <img className="w-50 rounded-xl object-cover" src={getImageUrl(data.poster_path)} alt={data.title} />
-          <div className="space-y-4 overflow-y-auto">
-            <h1 className="text-3xl font-bold">{data.title}</h1>
-            <p className="leading-relaxed text-gray-300">{data.overview}</p>
-            <div className="grid grid-cols-2 gap-4 pt-2">
-              <DetailItem label="Release" value={data.release_date} />
-              <DetailItem label="Rating" value={data.vote_average} />
-            </div>
-            <LinkGroup
-              options={
-                Tv
-                  ? [
-                      { label: 'Seasons', to: 'seasons' },
-                      { label: 'Credits', to: 'credits' },
-                      { label: 'Reviews', to: 'reviews' },
-                      { label: 'Trailers', to: 'trailers' },
-                    ]
-                  : [
-                      { label: 'Credits', to: 'credits' },
-                      { label: 'Reviews', to: 'reviews' },
-                      { label: 'Trailers', to: 'trailers' },
-                    ]
-              }
-            />
-            <Outlet context={{ data }} />
-          </div>
+    <section className="mx-auto max-w-7xl space-y-5 p-5">
+      <h1 className="mb-4 text-3xl font-bold">Now Playing</h1>
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-4">
+        <div className="flex gap-2">
+          {categories.map((c) => (
+            <button
+              key={c.key}
+              onClick={() => navigate(`/movies/category/${c.key}`)}
+              className={`rounded px-4 py-2 text-white transition ${movieCategory === c.key ? 'bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'} `}
+            >
+              {c.label}
+            </button>
+          ))}
         </div>
       </div>
-    </Modal>
+      <ImageGrid
+        images={gridData}
+        onClick={(image) => navigate(`/movie/${image.id}/credits`)}
+        renderOverlay={(image) => (
+          <ImageOverlay
+            actions={[
+              favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite),
+            ]}
+            image={image}
+          />
+        )}
+      />
+      <Pagination page={page} maxPages={data.total_pages} onClick={setPage} />
+    </section>
   );
 };

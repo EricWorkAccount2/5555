@@ -4,7 +4,7 @@ export * from '@/core/constants/images';
 export * from '@/core/constants/storage';
 export * from '@/core/types/components';
 export * from '@/core/types/endpoints';
+export * from '@/core/Utility/cartActions';
 export * from '@/core/Utility/getBackdropUrl';
 export * from '@/core/Utility/getImageUrl';
 export * from '@/core/Utility/imageActions';
-export * from '@/core/Utility/cartActions';

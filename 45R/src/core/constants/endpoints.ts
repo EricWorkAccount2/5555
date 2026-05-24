@@ -5,3 +5,5 @@ export const SEARCH_ENDPOINT = 'https://api.themoviedb.org/3/search';
 export const TV_ENDPOINT = 'https://api.themoviedb.org/3/tv';
 export const DISCOVER_ENDPOINT = 'https://api.themoviedb.org/3/discover';
 export const PERSON_ENDPOINT = 'https://api.themoviedb.org/3/person';
+export const FAVORITE_MOVIES_ENDPOINT = 'https://api.themoviedb.org/3/account/{account_id}/favorite/movies';
+export const FAVORITE_TV_ENDPOINT = 'https://api.themoviedb.org/3/account/{account_id}/favorite/tv';
