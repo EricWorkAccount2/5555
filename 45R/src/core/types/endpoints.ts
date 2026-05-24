@@ -13,6 +13,8 @@ export type MovieResponse = {
     original_title: string;
     original_name?: string;
     poster_path: string;
+    release_date?: string;
+    first_air_date?: string;
   }>;
   videos?: {
     results: Array<{
@@ -32,6 +34,8 @@ export type GenreResponse = {
     original_name?: string;
     name?: string;
     poster_path: string;
+    release_date?: string;
+    first_air_date?: string;
   }>;
   total_pages: number;
 };
@@ -51,6 +55,8 @@ export type TVResponse = {
     original_name?: string;
     original_title?: string;
     poster_path: string;
+    release_date?: string;
+    first_air_date?: string;
   }>;
   videos?: {
     results: Array<{
@@ -90,7 +96,7 @@ export type CreditsResponse = {
   cast: Array<{
     id: number;
     name: string;
-    profile_path: string;
+    profile_path: string | null;
     character: string;
   }>;
 };

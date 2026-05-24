@@ -1,9 +1,18 @@
 import { ImageGrid, ImageOverlay, Pagination } from '@/components';
-import { favoriteAction, getImageUrl, MOVIE_ENDPOINT, type ImageCell, type MovieResponse } from '@/core';
+import {  cartAction, favoriteAction, getImageUrl, MOVIE_ENDPOINT, type ImageCell, type MovieResponse } from '@/core';
 import { useTmdb } from '@/hooks';
 import { useUserContext } from '@/hooks/useUserContext';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+const getPrice = (releaseDate?: string) => {
+  const currentYear = new Date().getFullYear();
+  const releaseYear = releaseDate ? Number(releaseDate.slice(0, 4)) : NaN;
+  const yearsSince = Number.isFinite(releaseYear) && releaseYear > 0 ? Math.max(0, currentYear - releaseYear) : 0;
+  const price = Math.max(0, 19.99 - yearsSince * 1.99);
+
+  return `$${price.toFixed(2)}`;
+};
 
 export const MoviesView = () => {
   const navigate = useNavigate();
@@ -12,12 +21,13 @@ export const MoviesView = () => {
   const [page, setPage] = useState<number>(1);
 
   const { data } = useTmdb<MovieResponse>(`${MOVIE_ENDPOINT}/${movieCategory}`, { page, movieCategory });
-  const { favorites, toggleFavorite } = useUserContext();
+  const { favorites, toggleFavorite, cart, toggleCart } = useUserContext();
 
   const gridData: ImageCell[] = (data?.results ?? []).map((result) => ({
     id: result.id,
     imageUrl: getImageUrl(result.poster_path),
     primaryText: result.original_title,
+    secondaryText: getPrice(result.release_date),
     media: 'movie',
   }));
 
@@ -33,7 +43,7 @@ export const MoviesView = () => {
   return (
     <section className="mx-auto max-w-7xl space-y-5 p-5">
       <h1 className="mb-4 text-3xl font-bold">Now Playing</h1>
-      <div className="mb-4 flex flex-wrap items-center justify-end gap-4">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex gap-2">
           {categories.map((c) => (
             <button
@@ -43,16 +53,23 @@ export const MoviesView = () => {
             >
               {c.label}
             </button>
+            
           ))}
         </div>
       </div>
       <ImageGrid
-        images={gridData}
-        onClick={(image) => navigate(`/movie/${image.id}/credits`)}
-        renderOverlay={(image) => (
-          <ImageOverlay actions={[favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite)]} image={image} />
-        )}
-      />
+                    images={gridData}
+                    onClick={(image) => navigate(`/tv/${image.id}/credits`)}
+                    renderOverlay={(image) => (
+                      <ImageOverlay
+                        actions={[
+                          cartAction((image: ImageCell) => cart.has(image.id), toggleCart),
+                          favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite),
+                        ]}
+                        image={image}
+                      />
+                    )}
+                  />
       <Pagination page={page} maxPages={data.total_pages} onClick={setPage} />
     </section>
   );

@@ -20,31 +20,43 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   });
 
   const toggleFavorite = (image: ImageCell) => {
-    setFavorites((prev) => {
-      const cloned = new Map(prev);
+    const next = new Map(favorites);
 
-      if (cloned.has(image.id)) {
-        cloned.delete(image.id);
-      } else {
-        cloned.set(image.id, image);
-      }
+    if (next.has(image.id)) {
+      next.delete(image.id);
+    } else {
+      next.set(image.id, image);
+    }
 
-      return cloned;
-    });
+    setFavorites(next);
+
+    if (next.has(image.id)) {
+      setCart((prev) => {
+        const nextCart = new Map(prev);
+        nextCart.delete(image.id);
+        return nextCart;
+      });
+    }
   };
 
   const toggleCart = (image: ImageCell) => {
-    setCart((prev) => {
-      const cloned = new Map(prev);
+    const next = new Map(cart);
 
-      if (cloned.has(image.id)) {
-        cloned.delete(image.id);
-      } else {
-        cloned.set(image.id, image);
-      }
+    if (next.has(image.id)) {
+      next.delete(image.id);
+    } else {
+      next.set(image.id, image);
+    }
 
-      return cloned;
-    });
+    setCart(next);
+
+    if (next.has(image.id)) {
+      setFavorites((prev) => {
+        const nextFavorites = new Map(prev);
+        nextFavorites.delete(image.id);
+        return nextFavorites;
+      });
+    }
   };
 
   return (

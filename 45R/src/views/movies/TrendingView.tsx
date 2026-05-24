@@ -1,6 +1,15 @@
 import { ImageGrid, ImageOverlay, Pagination } from '@/components';
-import { favoriteAction, getImageUrl, TRENDING_ENDPOINT, type ImageCell, type MovieResponse, type TVResponse } from '@/core';
+import { cartAction, favoriteAction, getImageUrl, TRENDING_ENDPOINT, type ImageCell, type MovieResponse, type TVResponse } from '@/core';
 import { useTmdb } from '@/hooks';
+
+const getPrice = (releaseDate?: string) => {
+  const currentYear = new Date().getFullYear();
+  const releaseYear = releaseDate ? Number(releaseDate.slice(0, 4)) : NaN;
+  const yearsSince = Number.isFinite(releaseYear) && releaseYear > 0 ? Math.max(0, currentYear - releaseYear) : 0;
+  const price = Math.max(0, 19.99 - yearsSince * 1.99);
+
+  return `$${price.toFixed(2)}`;
+};
 import { useUserContext } from '@/hooks/useUserContext';
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -13,12 +22,13 @@ export const TrendingView = () => {
   const interval = searchParams.get('interval') || 'day';
   const movieType = category === 'movies' ? 'movie' : 'tv';
   const { data } = useTmdb<MovieResponse | TVResponse>(`${TRENDING_ENDPOINT}/${movieType}/${interval}`, { movieType, interval, page });
-  const { favorites, toggleFavorite } = useUserContext();
+  const { cart, favorites, toggleCart, toggleFavorite } = useUserContext();
 
   const gridData: ImageCell[] = (data?.results ?? []).map((result) => ({
     id: result.id,
     imageUrl: getImageUrl(result.poster_path),
     primaryText: result.original_title ?? result.name ?? result.original_name ?? 'Unknown',
+    secondaryText: getPrice(result.release_date ?? result.first_air_date),
     media: movieType,
   }));
 
@@ -65,7 +75,13 @@ export const TrendingView = () => {
         images={gridData}
         onClick={(image) => navigate(movieType === 'movie' ? `/movie/${image.id}/credits` : `/tv/${image.id}/seasons`)}
         renderOverlay={(image) => (
-          <ImageOverlay actions={[favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite)]} image={image} />
+          <ImageOverlay
+            actions={[
+              favoriteAction((image: ImageCell) => favorites.has(image.id), toggleFavorite),
+              cartAction((image: ImageCell) => cart.has(image.id), toggleCart),
+            ]}
+            image={image}
+          />
         )}
       />
       <Pagination page={page} maxPages={data.total_pages} onClick={setPage} />

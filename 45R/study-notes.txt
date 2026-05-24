@@ -1,0 +1,312 @@
+Source Study Notes for 45R/src
+
+Top-level files:
+- src/main.tsx
+  - Imports: App, UserProvider, '@/index.css', StrictMode, createRoot, BrowserRouter.
+  - Export: none.
+  - Purpose: application bootstrap, mount root React tree within BrowserRouter and UserProvider.
+
+- src/App.tsx
+  - Imports: MainLayout, all view components through '@/views', TVView, Route, Routes.
+  - Export: App component.
+  - Purpose: defines React Router routes and nested routes for movies, TV, people, favorites, cart, settings, and genres.
+
+- src/index.css
+  - Imports: none in source file.
+  - Export: none.
+  - Purpose: global CSS used across the app.
+
+Shared barrel files:
+- src/components/index.ts
+  - Re-exports: Button, ButtonGroup, ImageGrid, ImageOverlay, Link, LinkGroup, Pagination, SearchBar, DetailItem, Header, Modal.
+  - Purpose: one import point for shared components.
+
+- src/context/index.ts
+  - Re-exports: UserContext, UserProvider.
+  - Purpose: one import point for context.
+
+- src/core/index.ts
+  - Re-exports: constants and utilities from core/constants and core/Utility.
+  - Purpose: shared core entry point for constants, types, and helper functions.
+
+- src/views/index.ts
+  - Re-exports: all view components used by App.
+  - Purpose: simplifies view imports in App.tsx.
+
+Component library:
+- src/components/controls/buttons/Button.tsx
+  - Imports: ReactNode.
+  - Consts: baseStyles, variants.
+  - Export: Button.
+  - Purpose: reusable button with variant styling and disabled state.
+
+- src/components/controls/buttons/ButtonGroup.tsx
+  - Imports: Button from '@/components'.
+  - Export: ButtonGroup.
+  - Purpose: renders button options and highlights selected value.
+
+- src/components/controls/images/ImageGrid.tsx
+  - Imports: ImageCell type.
+  - Export: ImageGrid.
+  - Purpose: renders a grid of image cards; supports click and optional overlay.
+
+- src/components/controls/images/ImageOverlay.tsx
+  - Imports: ImageAction, ImageCell types.
+  - Export: ImageOverlay.
+  - Purpose: renders action buttons over an image card and stops click propagation.
+
+- src/components/controls/links/Link.tsx
+  - Imports: ReactNode, matchPath, NavLink, useLocation.
+  - Export: Link.
+  - Purpose: custom nav link with active and matched styling.
+
+- src/components/controls/links/LinkGroup.tsx
+  - Imports: Link from '@/components'.
+  - Export: LinkGroup.
+  - Purpose: renders a horizontal group of navigation links.
+
+- src/components/controls/Pagination.tsx
+  - Imports: Button from '@/components'.
+  - Consts: safeMaxPages, goPrev, goNext.
+  - Export: Pagination.
+  - Purpose: renders pagination controls and handles page increment/decrement.
+
+- src/components/controls/SearchBar.tsx
+  - Imports: none.
+  - Export: SearchBar.
+  - Purpose: search input component with change callback.
+
+- src/components/site/DetailItem.tsx
+  - Imports: none.
+  - Export: DetailItem.
+  - Purpose: small label-value detail card used in detail modals.
+
+- src/components/site/Header.tsx
+  - Imports: Link from '@/components', ICON_SIZE from '@/core', useUserContext, FaRegHeart, FaShoppingCart, GoGear, NavLink.
+  - Export: Header.
+  - Purpose: top navigation bar with page links, user name, favorites/cart counters, and settings link.
+
+- src/components/site/Modal.tsx
+  - Imports: ReactNode.
+  - Export: Modal.
+  - Purpose: modal overlay wrapper that closes on backdrop click.
+
+Application context:
+- src/context/UserContext.ts
+  - Imports: ImageCell type.
+  - Exports: UserContext and UserContextType.
+  - Purpose: type definitions for username, favorites, cart, and toggle handlers.
+
+- src/context/UserProvider.tsx
+  - Imports: ImageCell type, storage keys (CART_KEY, FAVORITES_KEY, USERNAME_KEY), useLocalStorage, ReactNode, UserContext.
+  - Consts: userName, favorites, cart state hooks.
+  - Functions: toggleFavorite and toggleCart.
+  - Export: UserProvider.
+  - Purpose: persists user settings and collections in localStorage and ensures cart/favorites are exclusive.
+
+Core shared utilities and types:
+- src/core/constants/components.ts
+  - Exports: RATE_LIMIT_DELAY = 500.
+  - Purpose: shared delay constant used for debounced search.
+
+- src/core/constants/endpoints.ts
+  - Exports: MOVIE_ENDPOINT, NOW_PLAYING_ENDPOINT, TRENDING_ENDPOINT, SEARCH_ENDPOINT, TV_ENDPOINT, DISCOVER_ENDPOINT, PERSON_ENDPOINT, FAVORITE_MOVIES_ENDPOINT, FAVORITE_TV_ENDPOINT.
+  - Purpose: TMDB API endpoint constants.
+
+- src/core/constants/images.ts
+  - Exports: ICON_SIZE, ORIGINAL_IMAGE_BASE_URL, IMAGE_BASE_URL, IMAGE_PLACEHOLDER.
+  - Purpose: image URL constants for posters, backdrops, icon size, and placeholder images.
+
+- src/core/constants/storage.ts
+  - Exports: USERNAME_KEY, FAVORITES_KEY, CART_KEY.
+  - Purpose: keys for localStorage persistence.
+
+- src/core/Utility/cartActions.tsx
+  - Imports: ICON_SIZE, ImageAction, ImageCell, FaShoppingCart.
+  - Export: cartAction function.
+  - Purpose: builds an action object for cart overlay buttons.
+
+- src/core/Utility/imageActions.tsx
+  - Imports: ICON_SIZE, ImageAction, ImageCell, FaHeart, FaRegHeart.
+  - Export: favoriteAction function.
+  - Purpose: builds an action object for favorite overlay buttons.
+
+- src/core/Utility/getImageUrl.ts
+  - Imports: IMAGE_BASE_URL, IMAGE_PLACEHOLDER.
+  - Export: getImageUrl function.
+  - Purpose: returns a full image URL or placeholder for posters.
+
+- src/core/Utility/getBackdropUrl.ts
+  - Imports: IMAGE_PLACEHOLDER, ORIGINAL_IMAGE_BASE_URL.
+  - Export: getBackdropUrl function.
+  - Purpose: returns a full backdrop image URL or placeholder.
+
+- src/core/types/components.ts
+  - Exports: Media, ImageCell, ImageAction, CartAction.
+  - Purpose: shared UI typing for image cards and actions.
+
+- src/core/types/endpoints.ts
+  - Exports: MovieResponse, GenreResponse, TVResponse, SeasonsResponse, EpisodeResponse, CreditsResponse, ReviewsResponse, SearchResponse, PersonResponse, CareerResponse, ImagesResponse.
+  - Purpose: typed shapes for TMDB API responses.
+
+Custom hooks:
+- src/hooks/index.ts
+  - Re-exports: useDebounce, useLocalStorage, useTmdb, useUserContext.
+  - Purpose: barrel file for custom hooks.
+
+- src/hooks/useDebounce.ts
+  - Imports: useEffect, useState.
+  - Consts: debouncedValue state, timer cleanup.
+  - Export: useDebounce.
+  - Purpose: debounces a value update by a delay.
+
+- src/hooks/useLocalStorage.ts
+  - Imports: useEffect, useState.
+  - Consts: value state initializer, serialization/deserialization options.
+  - Export: useLocalStorage.
+  - Purpose: persisted state hook with localStorage integration.
+
+- src/hooks/useTmdb.ts
+  - Imports: axios, useEffect, useState.
+  - Consts: data state, AbortController, fetchData async.
+  - Export: useTmdb.
+  - Purpose: fetches TMDB data with API key and returned query params.
+
+- src/hooks/useUserContext.ts
+  - Imports: UserContext, UserContextType, useContext.
+  - Export: useUserContext.
+  - Purpose: typed context hook, errors if used outside provider.
+
+Layouts:
+- src/layouts/index.ts
+  - Re-exports: MainLayout.
+  - Purpose: layout barrel file.
+
+- src/layouts/MainLayout.tsx
+  - Imports: Header, Outlet.
+  - Export: MainLayout.
+  - Purpose: app shell layout containing the header and nested route outlet.
+
+Views:
+- src/views/details/GenreViews.tsx
+  - Imports: ImageGrid, ImageOverlay, Pagination, DISCOVER_ENDPOINT, cartAction, favoriteAction, getImageUrl, GenreResponse, ImageCell, Media, useTmdb, useUserContext, useState, useNavigate, useParams.
+  - Consts: getPrice, movieGenres, tvGenres, genres, genreId.
+  - Export: GenreView.
+  - Purpose: discover page for movie/TV genres with type/genre buttons and overlay actions.
+
+- src/views/details/NowPlayingView.tsx
+  - Imports: ImageGrid, Pagination, getImageUrl, NOW_PLAYING_ENDPOINT, ImageCell, MovieResponse, useTmdb, useState, useNavigate.
+  - Consts: gridOptions.
+  - Export: NowPlayingView.
+  - Purpose: shows now playing movies with navigation to movie credits.
+
+- src/views/movies/MoviesView.tsx
+  - Imports: ImageGrid, ImageOverlay, Pagination, cartAction, favoriteAction, getImageUrl, MOVIE_ENDPOINT, ImageCell, MovieResponse, useTmdb, useUserContext, useState, useNavigate, useParams.
+  - Consts: getPrice, movieCategory, categories.
+  - Export: MoviesView.
+  - Purpose: movie category browser with cart/favorite overlay actions.
+
+- src/views/movies/Movie.tsx
+  - Imports: DetailItem, LinkGroup, Modal, MovieResponse, getBackdropUrl, getImageUrl, MOVIE_ENDPOINT, useTmdb, Outlet, useNavigate, useParams.
+  - Consts: getPrice.
+  - Export: MovieView.
+  - Purpose: movie detail modal with price, overview, and nested child views.
+
+- src/views/movies/TrendingView.tsx
+  - Imports: ImageGrid, ImageOverlay, Pagination, cartAction, favoriteAction, getImageUrl, TRENDING_ENDPOINT, ImageCell, MovieResponse, TVResponse, useTmdb, useUserContext, useState, useNavigate, useParams, useSearchParams.
+  - Consts: getPrice, interval, movieType, gridData.
+  - Export: TrendingView.
+  - Purpose: trending movies/TV page with day/week toggles and overlay actions.
+
+- src/views/movies/SearchView.tsx
+  - Imports: ButtonGroup, ImageGrid, ImageOverlay, Pagination, SearchBar, ImageCell, SearchResponse, favoriteAction, getImageUrl, RATE_LIMIT_DELAY, SEARCH_ENDPOINT, useDebounce, useTmdb, useUserContext, useState, useNavigate, useSearchParams.
+  - Consts: debouncedQuery, updateParam, gridData.
+  - Export: SearchView.
+  - Purpose: search page for movies, TV, and people with debounced query and favorite actions.
+
+- src/views/movies/PersonView.tsx
+  - Imports: Button, LinkGroup, getImageUrl, PERSON_ENDPOINT, PersonResponse, useTmdb, Outlet, useNavigate, useParams.
+  - Export: PersonView.
+  - Purpose: person detail page with biography and navigation to career/images.
+
+- src/views/movies/CareerView.tsx
+  - Imports: ImageGrid, getImageUrl, PERSON_ENDPOINT, CareerResponse, ImageCell, useTmdb, useNavigate, useParams.
+  - Export: CareerView.
+  - Purpose: shows person career credits and navigates to movie/TV details.
+
+- src/views/movies/ImagesView.tsx
+  - Imports: ImageGrid, getImageUrl, PERSON_ENDPOINT, ImageCell, ImagesResponse, useTmdb, useParams.
+  - Export: ImagesView.
+  - Purpose: shows a person's image gallery.
+
+- src/views/movies/CreditsView.tsx
+  - Imports: ImageGrid, getImageUrl, MOVIE_ENDPOINT, TV_ENDPOINT, CreditsResponse, ImageCell, useTmdb, useLocation, useNavigate, useParams.
+  - Export: CreditsView.
+  - Purpose: shows cast credits and links to person career pages.
+
+- src/views/movies/TrailersView.tsx
+  - Imports: MovieResponse, MOVIE_ENDPOINT, TV_ENDPOINT, useTmdb, useLocation, useParams.
+  - Export: TrailersView.
+  - Purpose: fetches videos and embeds the first matching YouTube trailer.
+
+- src/views/TV/TVView.tsx
+  - Imports: ImageGrid, ImageOverlay, Pagination, cartAction, favoriteAction, getImageUrl, TV_ENDPOINT, ImageCell, TVResponse, useTmdb, useUserContext, useState, useNavigate, useParams.
+  - Consts: getPrice, tvCategory, categories.
+  - Export: TVView.
+  - Purpose: TV category browser with cart/favorite overlay actions.
+
+- src/views/TV/TelevisionView.tsx
+  - Imports: DetailItem, ImageGrid, ImageOverlay, LinkGroup, Modal, ImageCell, TVResponse, cartAction, favoriteAction, getBackdropUrl, getImageUrl, TV_ENDPOINT, useTmdb, useUserContext, useNavigate, useParams, Outlet.
+  - Consts: getPrice, gridData.
+  - Export: TelevisionView.
+  - Purpose: TV show detail modal with nested routes and related cards.
+
+- src/views/TV/SeasonsView.tsx
+  - Imports: ImageGrid, ImageOverlay, TV_ENDPOINT, cartAction, getImageUrl, ImageCell, SeasonsResponse, useTmdb, useUserContext, Outlet, useNavigate, useParams.
+  - Consts: getPrice, seasons, gridData.
+  - Export: SeasonsView.
+  - Purpose: list TV seasons and render season cards.
+
+- src/views/TV/EpisodeView.tsx
+  - Imports: Button, ImageGrid, EpisodeResponse, TV_ENDPOINT, getImageUrl, useTmdb, useNavigate, useParams.
+  - Export: EpisodeView.
+  - Purpose: shows a season overview and episodes grid.
+
+- src/views/site/HomeView.tsx
+  - Imports: Button, useNavigate.
+  - Export: HomeView.
+  - Purpose: home landing page and entry button.
+
+- src/views/site/ErrorView.tsx
+  - Imports: Button, useNavigate.
+  - Export: ErrorView.
+  - Purpose: 404 fallback page.
+
+- src/views/site/ReviewsView.tsx
+  - Imports: ReviewsResponse, MOVIE_ENDPOINT, TV_ENDPOINT, useTmdb, useLocation, useParams.
+  - Export: ReviewsView.
+  - Purpose: displays up to five TMDB reviews for the current movie or TV route.
+
+- src/views/user/CartView.tsx
+  - Imports: ImageCell, useUserContext.
+  - Consts: parsePrice, formatPrice, total.
+  - Export: CartView.
+  - Purpose: renders cart items, thumbnail, remove button, and tax-inclusive totals.
+
+- src/views/user/FavoritesView.tsx
+  - Imports: ImageGrid, ImageOverlay, Pagination, favoriteAction, ImageCell, useUserContext, useState, useNavigate, useSearchParams.
+  - Consts: category, mediaType, favoritesList, hasMediaTag, filteredFavorites, PAGE_SIZE, totalPages, visibleFavorites.
+  - Export: FavoritesView.
+  - Purpose: renders favorited items with movie/TV filter tabs.
+
+- src/views/user/SettingsView.tsx
+  - Imports: Button, useUserContext, useState.
+  - Consts: value, error.
+  - Export: SettingsView.
+  - Purpose: username settings form with validation.
+
+Notes:
+- Most views use useTmdb for API data fetching and display a loading message while waiting.
+- Card components use ImageCell objects created from API results and pass those into ImageGrid.
+- Cart and favorites are managed through UserProvider and are mutually exclusive in state.
+- Route navigation is handled by React Router with nested child routes inside App.tsx.

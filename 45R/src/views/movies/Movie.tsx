@@ -1,7 +1,15 @@
 import { DetailItem, LinkGroup, Modal } from '@/components';
 import { type MovieResponse, getBackdropUrl, getImageUrl, MOVIE_ENDPOINT } from '@/core';
 import { useTmdb } from '@/hooks';
-import { FaShoppingCart } from 'react-icons/fa';
+
+const getPrice = (releaseDate?: string) => {
+  const currentYear = new Date().getFullYear();
+  const releaseYear = releaseDate ? Number(releaseDate.slice(0, 4)) : NaN;
+  const yearsSince = Number.isFinite(releaseYear) && releaseYear > 0 ? Math.max(0, currentYear - releaseYear) : 0;
+  const price = Math.max(0, 19.99 - yearsSince * 1.99);
+
+  return `$${price.toFixed(2)}`;
+};
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
 export const MovieView = () => {
@@ -25,13 +33,13 @@ export const MovieView = () => {
             <div className="grid grid-cols-2 gap-4 pt-2">
               <DetailItem label="Release" value={data.release_date} />
               <DetailItem label="Rating" value={data.vote_average} />
+              <DetailItem label="Price" value={getPrice(data.release_date)} />
             </div>
             <LinkGroup
               options={[
                 { label: 'Credits', to: 'credits' },
                 { label: 'Reviews', to: 'reviews' },
                 { label: 'Trailers', to: 'trailers' },
-                { label: 'Buy', to: 'buy', icon: <FaShoppingCart /> },
               ]}
             />
             <Outlet context={{ data }} />

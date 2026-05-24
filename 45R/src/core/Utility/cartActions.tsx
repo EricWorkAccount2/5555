@@ -5,7 +5,7 @@ export const cartAction = (isInCart: (image: ImageCell) => boolean, onToggleCart
   active: isInCart,
   icon: (active) =>
     active ? <FaShoppingCart className="text-blue-500" size={ICON_SIZE} /> : <FaShoppingCart className="text-white" size={ICON_SIZE} />,
-  id: 'cart',
+  id: "cart",
   onClick: onToggleCart,
-  position: 'right',
+  position: "right"
 });

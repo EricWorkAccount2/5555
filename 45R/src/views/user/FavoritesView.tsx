@@ -1,8 +1,8 @@
 import { ImageGrid, ImageOverlay, Pagination } from '@/components';
 import { favoriteAction, type ImageCell } from '@/core';
 import { useUserContext } from '@/hooks/useUserContext';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 
 export const FavoritesView = () => {
   const navigate = useNavigate();
@@ -17,16 +17,6 @@ export const FavoritesView = () => {
   const PAGE_SIZE = 12;
   const totalPages = Math.max(Math.ceil(filteredFavorites.length / PAGE_SIZE), 1);
   const visibleFavorites = filteredFavorites.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  useEffect(() => {
-    if (page > totalPages) {
-      setPage(totalPages);
-    }
-  }, [page, totalPages]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [category, filteredFavorites.length]);
 
   return (
     <section className="mx-auto max-w-7xl space-y-5 p-5">

@@ -1,6 +1,15 @@
 import { ImageGrid, ImageOverlay, Pagination } from '@/components';
 import { DISCOVER_ENDPOINT, cartAction, favoriteAction, getImageUrl, type GenreResponse, type ImageCell, type Media } from '@/core';
 import { useTmdb } from '@/hooks';
+
+const getPrice = (releaseDate?: string) => {
+  const currentYear = new Date().getFullYear();
+  const releaseYear = releaseDate ? Number(releaseDate.slice(0, 4)) : NaN;
+  const yearsSince = Number.isFinite(releaseYear) && releaseYear > 0 ? Math.max(0, currentYear - releaseYear) : 0;
+  const price = Math.max(0, 19.99 - yearsSince * 1.99);
+
+  return `$${price.toFixed(2)}`;
+};
 import { useUserContext } from '@/hooks/useUserContext';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -54,6 +63,7 @@ export const GenreView = () => {
     id: result.id,
     imageUrl: getImageUrl(result.poster_path),
     primaryText: result.original_title ?? result.name ?? 'Unknown',
+    secondaryText: getPrice(result.release_date ?? result.first_air_date),
     media: mediaType as Media,
   }));
 
